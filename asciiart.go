@@ -10,7 +10,7 @@ import (
 // Encode returns a byte slice that is sutable for writing to a terminal that
 // represents the contents of the supplied image.Image
 func Encode(img image.Image) ([]byte, error) {
-	return EncodeBuffer([]byte{}, img)
+	return EncodeBuffer(nil, img)
 }
 
 // Encode returns a byte slice that is sutable for writing to a terminal that
@@ -43,7 +43,7 @@ func EncodeBuffer(b []byte, img image.Image) ([]byte, error) {
 		}
 	}
 
-	buf.Write([]byte("\x1b[48;2;0;0;0m"))
+	buf.WriteString("\x1b[48;2;0;0;0m")
 
 	return buf.Bytes(), nil
 }
