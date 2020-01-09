@@ -7,10 +7,19 @@ import (
 	"io"
 )
 
+// Encode returns a byte slice that is sutable for writing to a terminal that
+// represents the contents of the supplied image.Image
 func Encode(img image.Image) ([]byte, error) {
 	return EncodeBuffer([]byte{}, img)
 }
 
+// Encode returns a byte slice that is sutable for writing to a terminal that
+// represents the contents of the supplied image.Image
+//
+// It writes to the supplied byte slice and appends to it as needed.  The
+// returned byte slice can be reused as the first parameter in subsequent calls
+// to prevent allocations.
+//
 func EncodeBuffer(b []byte, img image.Image) ([]byte, error) {
 	buf := bytes.NewBuffer(b)
 	buf.Write([]byte("\x1b[;f"))
