@@ -23,7 +23,6 @@ func Encode(img image.Image) ([]byte, error) {
 func EncodeBuffer(b []byte, img image.Image) ([]byte, error) {
 	buf := bytes.NewBuffer(b)
 	buf.Write([]byte("\x1b[;f"))
-
 	esc := func(w io.Writer, prev *[3]uint32, f string, img image.Image, x int, y int) {
 		col := img.At(x, y)
 		r, g, b, _ := col.RGBA()
@@ -32,7 +31,6 @@ func EncodeBuffer(b []byte, img image.Image) ([]byte, error) {
 			*prev = cur
 		}
 	}
-
 	// minor optimization -- store the previous color and avoid emitting escape
 	// code if the color hasn't changed.
 	for y, prevTop, prevBottom, rect := 0, [3]uint32{0, 0, 0}, [3]uint32{0, 0, 0}, img.Bounds(); y < rect.Max.Y; y += 2 {
@@ -42,8 +40,6 @@ func EncodeBuffer(b []byte, img image.Image) ([]byte, error) {
 			buf.WriteRune('▀')
 		}
 	}
-
 	buf.WriteString("\x1b[48;2;0;0;0m")
-
 	return buf.Bytes(), nil
 }
