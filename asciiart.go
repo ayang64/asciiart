@@ -8,7 +8,6 @@ import (
 )
 
 func Encode(w io.Writer, img image.Image) error {
-	rect := img.Bounds()
 
 	// minor optimization -- store the previous color and avoid emitting escape
 	// code if the color hasn't changed.
@@ -22,9 +21,8 @@ func Encode(w io.Writer, img image.Image) error {
 		return err
 	}
 
-	for y := 0; y < rect.Max.Y; y += 2 {
+	for y, rect := 0, img.Bounds(); y < rect.Max.Y; y += 2 {
 		for x := 0; x < rect.Max.X; x++ {
-
 			col := img.At(x, y)
 			r, g, b, _ := col.RGBA()
 
