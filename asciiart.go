@@ -8,14 +8,15 @@ import (
 )
 
 func Encode(w io.Writer, img image.Image) error {
+	return EncodeBuffer(w, img, &bytes.Buffer{})
+}
 
+func EncodeBuffer(w io.Writer, img image.Image, buf *bytes.Buffer) error {
 	// minor optimization -- store the previous color and avoid emitting escape
 	// code if the color hasn't changed.
 
 	prevTop := [3]uint32{0, 0, 0}
 	prevBottom := [3]uint32{0, 0, 0}
-
-	buf := &bytes.Buffer{}
 
 	if _, err := buf.WriteString("\x1b[;f"); err != nil {
 		return err
@@ -29,7 +30,7 @@ func Encode(w io.Writer, img image.Image) error {
 			curTop := [3]uint32{r >> 8, g >> 8, b >> 8}
 
 			if y == 0 || curTop != prevTop {
-				if _, err := buf.WriteString(fmt.Sprintf("\x1b[38;2;%d;%d;%dm", r>>8, g>>8, b>>8)); err != nil {
+				if _, err := fmt.Fprintf(buf, "\x1b[38;2;%d;%d;%dm", r>>8, g>>8, b>>8); err != nil {
 					return err
 				}
 				prevTop = curTop
@@ -40,7 +41,7 @@ func Encode(w io.Writer, img image.Image) error {
 			curBottom := [3]uint32{r >> 8, g >> 8, b >> 8}
 
 			if y == 0 || curBottom != prevBottom {
-				if _, err := buf.WriteString(fmt.Sprintf("\x1b[48;2;%d;%d;%dm", r>>8, g>>8, b>>8)); err != nil {
+				if _, err := fmt.Fprintf(buf, "\x1b[48;2;%d;%d;%dm", r>>8, g>>8, b>>8); err != nil {
 					return err
 				}
 				prevBottom = curBottom
