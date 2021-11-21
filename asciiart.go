@@ -12,9 +12,10 @@ func Encode(w io.Writer, img image.Image) error {
 }
 
 func EncodeBuffer(w io.Writer, img image.Image, buf *bytes.Buffer) error {
+	buf.Reset()
+
 	// minor optimization -- store the previous color and avoid emitting escape
 	// code if the color hasn't changed.
-
 	prevTop := [3]uint32{0, 0, 0}
 	prevBottom := [3]uint32{0, 0, 0}
 
